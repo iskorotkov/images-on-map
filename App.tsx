@@ -1,17 +1,21 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { launchImageLibraryAsync, requestCameraPermissionsAsync } from 'expo-image-picker'
-import { useCallback, useEffect, useState } from 'react'
+import { memo, useCallback, useEffect, useState } from 'react'
 import GoogleMapReact from 'google-map-react'
 import Geolocation from '@react-native-community/geolocation'
 import Constants from 'expo-constants'
+import { LocationMarker } from './src/LocationMarker'
 
 const moscowLocation = { lat: 55.74, lng: 37.62 }
 
-const App = () => {
-  const [apiLoaded, setApiLoaded] = useState(false)
-  const [currentLocation, setCurrentLocation] = useState(moscowLocation)
-  const [zoom, setZoom] = useState(8)
+const App = memo(() => {
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null)
   const [selectedImage, setSelectedImage] = useState('')
+
+  // Google Maps API.
+  const [apiLoaded, setApiLoaded] = useState(false)
+  const [mapCenter, setMapCenter] = useState(moscowLocation)
+  const [mapZoom, setMapZoom] = useState(8)
 
   const openImagePickerAsync = useCallback(async () => {
     const permissionResult = await requestCameraPermissionsAsync()
@@ -29,10 +33,10 @@ const App = () => {
   const handleChange = useCallback(
     (value: GoogleMapReact.ChangeEventValue) => {
       console.debug('changed geolocation', value)
-      setCurrentLocation(value.center)
-      setZoom(value.zoom)
+      setMapCenter(value.center)
+      setMapZoom(value.zoom)
     },
-    [setCurrentLocation]
+    [setMapCenter]
   )
 
   const handleGoogleApiLoaded = useCallback(() => {
@@ -49,27 +53,31 @@ const App = () => {
       position => {
         console.debug('got geolocation', position.coords)
         const { latitude, longitude } = position.coords
-        setCurrentLocation({ lat: latitude, lng: longitude })
-        setZoom(13)
+        const newLocation = { lat: latitude, lng: longitude }
+        setUserLocation(newLocation)
+        setMapCenter(newLocation)
+        setMapZoom(13)
       },
       error => {
         console.error(error)
         alert('Permission to access geolocation is required')
       }
     )
-  }, [apiLoaded, setCurrentLocation])
+  }, [apiLoaded, setMapCenter, userLocation])
 
   return (
     <View style={styles.container}>
       <View style={styles.map}>
         <GoogleMapReact
-          zoom={zoom}
-          center={currentLocation}
+          zoom={mapZoom}
+          center={mapCenter}
           onChange={handleChange}
           onGoogleApiLoaded={handleGoogleApiLoaded}
           yesIWantToUseGoogleMapApiInternals={true}
           bootstrapURLKeys={{ key: Constants.manifest?.extra?.googleMapApiKey }}
-        ></GoogleMapReact>
+        >
+          {userLocation ? <LocationMarker {...userLocation} /> : null}
+        </GoogleMapReact>
       </View>
 
       {selectedImage ? <Image source={{ uri: selectedImage }} style={styles.thumbnail} /> : null}
@@ -79,7 +87,7 @@ const App = () => {
       </TouchableOpacity>
     </View>
   )
-}
+})
 
 const styles = StyleSheet.create({
   container: {
