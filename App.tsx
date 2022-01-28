@@ -15,9 +15,13 @@ const Stack = createNativeStackNavigator<StackParamList>()
 const App = memo(() => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='Map'>
+      <Stack.Navigator initialRouteName='Marker'>
         <Stack.Screen name='Map' component={MapScreen} />
-        <Stack.Screen name='Marker' component={MarkerScreen} />
+        <Stack.Screen
+          name='Marker'
+          component={MarkerScreen}
+          initialParams={{ coords: { lat: 123.523, lng: -23.21 } }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   )
