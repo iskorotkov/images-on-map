@@ -5,6 +5,7 @@
 *.p12
 *.p8
 .DS_Store
+.env
 .expo/
 .idea/
 .vs/
