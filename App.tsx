@@ -1,16 +1,18 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { launchImageLibraryAsync, requestCameraPermissionsAsync } from 'expo-image-picker'
 import { memo, useCallback, useEffect, useState } from 'react'
-import GoogleMapReact from 'google-map-react'
+import GoogleMapReact, { ChangeEventValue, ClickEventValue, Coords } from 'google-map-react'
 import Geolocation from '@react-native-community/geolocation'
 import Constants from 'expo-constants'
-import { LocationMarker } from './src/LocationMarker'
+import { UserMarker } from './src/UserMarker'
+import { ImagesMarker } from './src/ImagesMarker'
 
 const moscowLocation = { lat: 55.74, lng: 37.62 }
 
 const App = memo(() => {
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null)
   const [selectedImage, setSelectedImage] = useState('')
+  const [imagesMarkers, setImagesMarkers] = useState<Coords[]>([])
 
   // Google Maps API.
   const [apiLoaded, setApiLoaded] = useState(false)
@@ -29,20 +31,6 @@ const App = memo(() => {
       setSelectedImage(pickerResult.uri)
     }
   }, [setSelectedImage])
-
-  const handleChange = useCallback(
-    (value: GoogleMapReact.ChangeEventValue) => {
-      console.debug('changed geolocation', value)
-      setMapCenter(value.center)
-      setMapZoom(value.zoom)
-    },
-    [setMapCenter]
-  )
-
-  const handleGoogleApiLoaded = useCallback(() => {
-    console.debug('google api loaded')
-    setApiLoaded(true)
-  }, [])
 
   useEffect(() => {
     if (!apiLoaded) {
@@ -63,7 +51,28 @@ const App = memo(() => {
         alert('Permission to access geolocation is required')
       }
     )
-  }, [apiLoaded, setMapCenter, userLocation])
+  }, [apiLoaded, setUserLocation, setMapCenter, setMapZoom])
+
+  const handleChange = useCallback(
+    (value: ChangeEventValue) => {
+      console.debug('changed map location', value)
+      setMapCenter(value.center)
+      setMapZoom(value.zoom)
+    },
+    [setMapCenter, setMapZoom]
+  )
+
+  const handleGoogleApiLoaded = useCallback(() => {
+    console.debug('google api loaded')
+    setApiLoaded(true)
+  }, [setApiLoaded])
+
+  const handleClick = useCallback(
+    (value: ClickEventValue) => {
+      setImagesMarkers(imagesMarkers => [...imagesMarkers, { lat: value.lat, lng: value.lng }])
+    },
+    [setImagesMarkers]
+  )
 
   return (
     <View style={styles.container}>
@@ -72,11 +81,16 @@ const App = memo(() => {
           zoom={mapZoom}
           center={mapCenter}
           onChange={handleChange}
+          onClick={handleClick}
           onGoogleApiLoaded={handleGoogleApiLoaded}
           yesIWantToUseGoogleMapApiInternals={true}
           bootstrapURLKeys={{ key: Constants.manifest?.extra?.googleMapApiKey }}
         >
-          {userLocation ? <LocationMarker {...userLocation} /> : null}
+          {userLocation ? <UserMarker {...userLocation} /> : null}
+
+          {imagesMarkers.map((marker, index) => (
+            <ImagesMarker key={index} {...marker} />
+          ))}
         </GoogleMapReact>
       </View>
 

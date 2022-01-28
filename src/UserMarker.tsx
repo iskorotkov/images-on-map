@@ -1,8 +1,9 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React, { memo } from 'react'
+import { Coords } from 'google-map-react'
 
 // noinspection JSUnusedLocalSymbols
-export const LocationMarker = memo(({ lat, lng }: { lat: number; lng: number }) => {
+export const UserMarker = memo(({ lat, lng }: Coords) => {
   return (
     <View style={styles.container}>
       <Text style={styles.text}>You</Text>
@@ -16,7 +17,7 @@ const styles = StyleSheet.create({
     height: 30,
     borderRadius: 100,
     padding: 10,
-    backgroundColor: '#ff5555',
+    backgroundColor: '#f55',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
