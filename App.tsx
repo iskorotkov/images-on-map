@@ -8,6 +8,7 @@ import Constants from 'expo-constants'
 const moscowLocation = { lat: 55.74, lng: 37.62 }
 
 const App = () => {
+  const [apiLoaded, setApiLoaded] = useState(false)
   const [currentLocation, setCurrentLocation] = useState(moscowLocation)
   const [zoom, setZoom] = useState(8)
   const [selectedImage, setSelectedImage] = useState('')
@@ -27,15 +28,26 @@ const App = () => {
 
   const handleChange = useCallback(
     (value: GoogleMapReact.ChangeEventValue) => {
+      console.debug('changed geolocation', value)
       setCurrentLocation(value.center)
       setZoom(value.zoom)
     },
-    [setCurrentLocation, setZoom]
+    [setCurrentLocation]
   )
 
+  const handleGoogleApiLoaded = useCallback(() => {
+    console.debug('google api loaded')
+    setApiLoaded(true)
+  }, [])
+
   useEffect(() => {
+    if (!apiLoaded) {
+      return
+    }
+
     Geolocation.getCurrentPosition(
       position => {
+        console.debug('got geolocation', position.coords)
         const { latitude, longitude } = position.coords
         setCurrentLocation({ lat: latitude, lng: longitude })
         setZoom(13)
@@ -45,7 +57,7 @@ const App = () => {
         alert('Permission to access geolocation is required')
       }
     )
-  }, [setCurrentLocation])
+  }, [apiLoaded, setCurrentLocation])
 
   return (
     <View style={styles.container}>
@@ -54,11 +66,13 @@ const App = () => {
           zoom={zoom}
           center={currentLocation}
           onChange={handleChange}
+          onGoogleApiLoaded={handleGoogleApiLoaded}
+          yesIWantToUseGoogleMapApiInternals={true}
           bootstrapURLKeys={{ key: Constants.manifest?.extra?.googleMapApiKey }}
         ></GoogleMapReact>
       </View>
 
-      {selectedImage && <Image source={{ uri: selectedImage }} style={styles.thumbnail} />}
+      {selectedImage ? <Image source={{ uri: selectedImage }} style={styles.thumbnail} /> : null}
 
       <TouchableOpacity onPress={openImagePickerAsync} style={styles.button}>
         <Text style={styles.buttonText}>Pick a photo</Text>
