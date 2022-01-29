@@ -1,7 +1,8 @@
 import { memo } from 'react'
 import { Image, StyleSheet, View } from 'react-native'
 
-export const Gallery = memo(() => {
+// noinspection JSUnusedLocalSymbols
+export const Gallery = memo(({ images }: { images: string[] }) => {
   return (
     <View style={styles.container}>
       <Image style={styles.image} source={{ uri: '' }} />

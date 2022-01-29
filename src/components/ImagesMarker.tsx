@@ -2,8 +2,10 @@ import { memo } from 'react'
 import { Coords } from 'google-map-react'
 import { StyleSheet, View } from 'react-native'
 
+export type ImageMarkerProps = Coords & { id: string }
+
 // noinspection JSUnusedLocalSymbols
-export const ImagesMarker = memo(({ lat, lng }: Coords) => {
+export const ImagesMarker = memo(({ id, lat, lng }: ImageMarkerProps) => {
   return <View style={styles.container}></View>
 })
 

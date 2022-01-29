@@ -3,27 +3,26 @@ import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { MapScreen } from './src/screens/MapScreen'
 import { MarkerScreen } from './src/screens/MarkerScreen'
-import { Coords } from 'google-map-react'
+import { store } from './src/store/store'
+import { Provider } from 'react-redux'
 
 export type StackParamList = {
   Map: {}
-  Marker: { coords: Coords }
+  Marker: { id: string }
 }
 
 const Stack = createNativeStackNavigator<StackParamList>()
 
 const App = memo(() => {
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName='Marker'>
-        <Stack.Screen name='Map' component={MapScreen} />
-        <Stack.Screen
-          name='Marker'
-          component={MarkerScreen}
-          initialParams={{ coords: { lat: 123.523, lng: -23.21 } }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Provider store={store}>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName='Map'>
+          <Stack.Screen name='Map' component={MapScreen} />
+          <Stack.Screen name='Marker' component={MarkerScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </Provider>
   )
 })
 

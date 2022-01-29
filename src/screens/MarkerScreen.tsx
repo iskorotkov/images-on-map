@@ -1,36 +1,35 @@
-import { memo, useCallback, useState } from 'react'
+import { memo, useCallback } from 'react'
 import { StyleSheet, Text, TextInput, TouchableHighlight, View } from 'react-native'
 import { StackParamList } from '../../App'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { Gallery } from '../components/Gallery'
 import { defaultStyles } from '../styles'
+import { useAppDispatch, useAppSelector } from '../store/hooks'
+import { renameMarker, selectMarkerById } from '../store/markersReducer'
 
 type Props = NativeStackScreenProps<StackParamList, 'Marker'>
 
 export const MarkerScreen = memo(({ route, navigation }: Props) => {
-  const coords = route.params.coords
+  const id = route.params.id
+  const marker = useAppSelector(selectMarkerById(id))
+  const { name, location, images } = marker
 
-  const [markerName, setMarkerName] = useState('New marker')
+  const dispatch = useAppDispatch()
 
-  const handleChangeText = useCallback((value: string) => setMarkerName(value), [setMarkerName])
+  const handleChangeText = useCallback((name: string) => dispatch(renameMarker({ id, name })), [dispatch, id])
 
   const handlePress = useCallback(() => navigation.goBack(), [navigation])
 
   return (
     <View style={styles.container}>
-      <TextInput
-        style={styles.nameInput}
-        placeholder='Marker name'
-        value={markerName}
-        onChangeText={handleChangeText}
-      />
+      <TextInput style={styles.nameInput} placeholder='Marker name' value={name} onChangeText={handleChangeText} />
 
       <Text style={styles.location}>
-        Location: ({coords.lat}, {coords.lng})
+        Location: ({location.lat}, {location.lng})
       </Text>
 
       <View style={styles.gallery}>
-        <Gallery />
+        <Gallery images={images} />
       </View>
 
       <View style={styles.buttons}>

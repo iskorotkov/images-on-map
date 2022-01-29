@@ -1,40 +1,30 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import { launchImageLibraryAsync, requestCameraPermissionsAsync } from 'expo-image-picker'
+import { StyleSheet, View } from 'react-native'
 import { memo, useCallback, useEffect, useState } from 'react'
-import GoogleMapReact, { ChangeEventValue, ClickEventValue, Coords } from 'google-map-react'
+import GoogleMapReact, { ChangeEventValue, ClickEventValue } from 'google-map-react'
 import Geolocation from '@react-native-community/geolocation'
 import Constants from 'expo-constants'
 import { UserMarker } from '../components/UserMarker'
-import { ImagesMarker } from '../components/ImagesMarker'
+import { ImageMarkerProps, ImagesMarker } from '../components/ImagesMarker'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { StackParamList } from '../../App'
+import { useAppDispatch, useAppSelector } from '../store/hooks'
+import { addMarker, selectMarkers } from '../store/markersReducer'
+import { v4 } from 'uuid'
 
 const moscowLocation = { lat: 55.74, lng: 37.62 }
 
 type Props = NativeStackScreenProps<StackParamList, 'Map'>
 
 export const MapScreen = memo(({ navigation }: Props) => {
+  const markers = useAppSelector(selectMarkers)
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null)
-  const [selectedImage, setSelectedImage] = useState('')
-  const [imagesMarkers, setImagesMarkers] = useState<Coords[]>([])
 
   // Google Maps API.
   const [apiLoaded, setApiLoaded] = useState(false)
   const [mapCenter, setMapCenter] = useState(moscowLocation)
   const [mapZoom, setMapZoom] = useState(8)
 
-  const openImagePickerAsync = useCallback(async () => {
-    const permissionResult = await requestCameraPermissionsAsync()
-    if (!permissionResult.granted) {
-      alert('Permission to access camera is required')
-      return
-    }
-
-    const pickerResult = await launchImageLibraryAsync()
-    if (!pickerResult.cancelled) {
-      setSelectedImage(pickerResult.uri)
-    }
-  }, [setSelectedImage])
+  const dispatch = useAppDispatch()
 
   useEffect(() => {
     if (!apiLoaded) {
@@ -73,19 +63,27 @@ export const MapScreen = memo(({ navigation }: Props) => {
 
   const handleClick = useCallback(
     (value: ClickEventValue) => {
-      setImagesMarkers(imagesMarkers => [...imagesMarkers, { lat: value.lat, lng: value.lng }])
+      dispatch(
+        addMarker({
+          id: v4(),
+          name: 'New marker',
+          location: { lat: value.lat, lng: value.lng },
+          images: []
+        })
+      )
     },
-    [setImagesMarkers]
+    [dispatch]
   )
 
   const handleChildClick = useCallback(
-    (hoverKey: any, childProps: Coords) => {
-      navigation.push('Marker', {
-        coords: {
-          lat: childProps.lat,
-          lng: childProps.lng
-        }
-      })
+    (hoverKey: any, childProps: ImageMarkerProps) => {
+      console.log('selected marker with props', childProps)
+
+      if (!childProps.id) {
+        console.error('marker id property not set on component')
+        return
+      }
+      navigation.push('Marker', { id: childProps.id })
     },
     [navigation]
   )
@@ -105,17 +103,11 @@ export const MapScreen = memo(({ navigation }: Props) => {
         >
           {userLocation ? <UserMarker {...userLocation} /> : null}
 
-          {imagesMarkers.map((marker, index) => (
-            <ImagesMarker key={index} {...marker} />
+          {markers.map(marker => (
+            <ImagesMarker key={marker.id} id={marker.id} {...marker.location} />
           ))}
         </GoogleMapReact>
       </View>
-
-      {selectedImage ? <Image source={{ uri: selectedImage }} style={styles.thumbnail} /> : null}
-
-      <TouchableOpacity onPress={openImagePickerAsync} style={styles.button}>
-        <Text style={styles.buttonText}>Pick a photo</Text>
-      </TouchableOpacity>
     </View>
   )
 })
@@ -142,6 +134,6 @@ const styles = StyleSheet.create({
   },
   map: {
     width: '100%',
-    height: '60%'
+    height: '100%'
   }
 })
