@@ -11,10 +11,10 @@ export const ImagesMarker = memo(({ id, lat, lng }: ImageMarkerProps) => {
 
 const styles = StyleSheet.create({
   container: {
-    width: 20,
-    height: 20,
+    width: 30,
+    height: 30,
     borderRadius: 100,
     backgroundColor: '#338fff',
-    transform: [{ translateX: -10 }, { translateY: -10 }]
+    transform: [{ translateX: -15 }, { translateY: -15 }]
   }
 })

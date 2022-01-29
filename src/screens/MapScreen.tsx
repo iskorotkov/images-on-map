@@ -119,15 +119,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-start'
   },
-  button: {
-    backgroundColor: '#0b82e7',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 50
-  },
-  buttonText: {
-    color: '#fff'
-  },
   thumbnail: {
     width: 300,
     height: 300

@@ -1,15 +1,16 @@
 import { memo } from 'react'
-import { Image, StyleSheet, View } from 'react-native'
+import { Image, StyleSheet, Text, View } from 'react-native'
 
-// noinspection JSUnusedLocalSymbols
 export const Gallery = memo(({ images }: { images: string[] }) => {
+  if (images.length === 0) {
+    return <Text style={styles.text}>Attach images to view them here</Text>
+  }
+
   return (
     <View style={styles.container}>
-      <Image style={styles.image} source={{ uri: '' }} />
-      <Image style={styles.image} source={{ uri: '' }} />
-      <Image style={styles.image} source={{ uri: '' }} />
-      <Image style={styles.image} source={{ uri: '' }} />
-      <Image style={styles.image} source={{ uri: '' }} />
+      {images.map(uri => (
+        <Image style={styles.image} source={{ uri }} />
+      ))}
     </View>
   )
 })
@@ -20,6 +21,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center'
+  },
+  text: {
+    marginHorizontal: 'auto',
+    marginVertical: 2,
+    textAlign: 'center'
   },
   image: {
     margin: 2,

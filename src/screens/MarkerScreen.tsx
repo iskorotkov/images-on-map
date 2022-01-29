@@ -6,6 +6,8 @@ import { Gallery } from '../components/Gallery'
 import { defaultStyles } from '../styles'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { renameMarker, selectMarkerById } from '../store/markersReducer'
+import { TakePhoto } from '../components/TakePhoto'
+import { ChooseImage } from '../components/ChooseImage'
 
 type Props = NativeStackScreenProps<StackParamList, 'Marker'>
 
@@ -28,9 +30,11 @@ export const MarkerScreen = memo(({ route, navigation }: Props) => {
         Location: ({location.lat}, {location.lng})
       </Text>
 
-      <View style={styles.gallery}>
-        <Gallery images={images} />
-      </View>
+      <ChooseImage />
+
+      <TakePhoto />
+
+      <Gallery images={images} />
 
       <View style={styles.buttons}>
         <TouchableHighlight style={styles.backButton} onPress={handlePress}>
@@ -70,9 +74,6 @@ const styles = StyleSheet.create({
     borderRadius: 5
   },
   location: {
-    margin: 10
-  },
-  gallery: {
     margin: 10
   },
   buttons: {
