@@ -1,13 +1,11 @@
-import { ImageURISource, StyleSheet, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import { memo, useCallback, useState } from 'react'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { StackParamList } from '../../App'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { addMarker, selectMarkers } from '../store/markersReducer'
 import MapView, { EventUserLocation, MapEvent, Marker as MapMarker, PROVIDER_GOOGLE, Region } from 'react-native-maps'
-import 'react-native-get-random-values'
-import { v4 } from 'uuid'
-import { Marker } from '../models/marker'
+import { uuid } from '../uuid'
 
 type Props = NativeStackScreenProps<StackParamList, 'Map'>
 
@@ -20,24 +18,12 @@ export const MapScreen = memo(({ navigation }: Props) => {
   const [firstLoad, setFirstLoad] = useState(true)
   const [selectedLocation, setSelectedLocation] = useState<Region>(moscowLocation)
 
-  const getMarkerImage = useCallback(
-    (marker: Marker) =>
-      marker.images.length > 0
-        ? ({
-            uri: marker.images[0],
-            width: 40,
-            height: 40
-          } as ImageURISource)
-        : undefined,
-    []
-  )
-
   const handleMarkerAdd = useCallback(
     (event: MapEvent) => {
       console.debug('adding marker')
       dispatch(
         addMarker({
-          id: v4(),
+          id: uuid(),
           name: 'New marker',
           location: event.nativeEvent.coordinate,
           images: []
@@ -95,11 +81,10 @@ export const MapScreen = memo(({ navigation }: Props) => {
       >
         {markers.map(_ => (
           <MapMarker
-            key={_.id + _.name}
+            key={_.id + _.name + _.images.length}
             identifier={_.id}
             title={_.name}
-            description={`${_.images.length} images`}
-            image={getMarkerImage(_)}
+            description={`${_.images.length} image(s)`}
             coordinate={{ longitude: _.location.longitude, latitude: _.location.latitude }}
             onCalloutPress={() => handleMarkerSelect(_.id)}
           />

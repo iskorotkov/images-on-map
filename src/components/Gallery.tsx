@@ -1,20 +1,22 @@
 import { memo } from 'react'
-import { Image, StyleSheet, Text, View } from 'react-native'
+import { Image as ImageComponent, StyleSheet, Text, View } from 'react-native'
+import { Image } from '../models/image'
 
-export const Gallery = memo(({ images }: { images: string[] }) => {
+export const Gallery = memo(({ images }: { images: Image[] }) => {
   if (images.length === 0) {
     return <Text style={styles.text}>Attach images to view them here</Text>
   }
 
   return (
     <View style={styles.container}>
-      {images.map(uri => (
-        <Image style={styles.image} source={{ uri }} />
+      {images.map(({ id, uri }) => (
+        <ImageComponent key={id} style={styles.image} source={{ uri }} />
       ))}
     </View>
   )
 })
 
+// TODO: Always show 3-5 images in each row.
 const styles = StyleSheet.create({
   container: {
     display: 'flex',
@@ -31,7 +33,7 @@ const styles = StyleSheet.create({
     margin: 2,
     borderRadius: 4,
     backgroundColor: '#aaa',
-    width: 200,
-    height: 200
+    width: 100,
+    height: 100
   }
 })

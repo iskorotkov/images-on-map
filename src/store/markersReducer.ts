@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { Marker } from '../models/marker'
 import { RootState } from './store'
+import { Image } from '../models/image'
 
 type MarkersState = Marker[]
 
@@ -11,14 +12,14 @@ export const markersSlice = createSlice({
   initialState,
   reducers: {
     addMarker: (state, action: PayloadAction<Marker>) => [...state, action.payload],
-    removeMarker: (state, action: PayloadAction<Marker>) => state.filter(_ => _ !== action.payload),
+    removeMarker: (state, action: PayloadAction<string>) => state.filter(_ => _.id !== action.payload),
     renameMarker: (state, action: PayloadAction<{ id: string; name: string }>) =>
       state.map(_ => (_.id === action.payload.id ? { ..._, name: action.payload.name } : _)),
-    addImage: (state, action: PayloadAction<{ id: string; image: string }>) =>
+    addImage: (state, action: PayloadAction<{ id: string; image: Image }>) =>
       state.map(_ => (_.id === action.payload.id ? { ..._, images: [..._.images, action.payload.image] } : _)),
-    removeImage: (state, action: PayloadAction<{ id: string; image: string }>) =>
+    removeImage: (state, action: PayloadAction<{ id: string; imageId: string }>) =>
       state.map(_ =>
-        _.id === action.payload.id ? { ..._, images: _.images.filter(_ => _ !== action.payload.image) } : _
+        _.id === action.payload.id ? { ..._, images: _.images.filter(_ => _.id !== action.payload.imageId) } : _
       )
   }
 })

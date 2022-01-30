@@ -1,11 +1,11 @@
-import { memo, useCallback, useState } from 'react'
+import { memo, useCallback } from 'react'
 import { launchImageLibraryAsync, requestCameraPermissionsAsync } from 'expo-image-picker'
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { defaultStyles } from '../styles'
+import { Image } from '../models/image'
+import { uuid } from '../uuid'
 
-export const ChooseImage = memo(() => {
-  const [selectedImage, setSelectedImage] = useState('')
-
+export const SelectImage = memo(({ onSelected }: { onSelected: (img: Image) => void }) => {
   const openImagePicker = useCallback(async () => {
     const permissionResult = await requestCameraPermissionsAsync()
     if (!permissionResult.granted) {
@@ -15,14 +15,13 @@ export const ChooseImage = memo(() => {
 
     const pickerResult = await launchImageLibraryAsync()
     if (!pickerResult.cancelled) {
-      setSelectedImage(pickerResult.uri)
+      const { uri, height, width } = pickerResult
+      onSelected({ id: uuid(), uri, width, height })
     }
-  }, [setSelectedImage])
+  }, [onSelected])
 
   return (
     <View style={styles.container}>
-      {selectedImage ? <Image source={{ uri: selectedImage }} style={styles.thumbnail} /> : null}
-
       <TouchableOpacity onPress={openImagePicker} style={styles.chooseImageButton}>
         <Text style={defaultStyles.buttonText}>Choose image from gallery</Text>
       </TouchableOpacity>

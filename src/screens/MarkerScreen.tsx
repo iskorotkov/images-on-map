@@ -1,18 +1,18 @@
-import { memo, useCallback } from 'react'
-import { StyleSheet, Text, TextInput, TouchableHighlight, View } from 'react-native'
+import { memo, useCallback, useEffect } from 'react'
+import { StyleSheet, Text, TextInput, TouchableHighlight, TouchableOpacity, View } from 'react-native'
 import { StackParamList } from '../../App'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { Gallery } from '../components/Gallery'
 import { defaultStyles } from '../styles'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
-import { renameMarker, selectMarkerById } from '../store/markersReducer'
-import { TakePhoto } from '../components/TakePhoto'
-import { ChooseImage } from '../components/ChooseImage'
+import { addImage, renameMarker, selectMarkerById } from '../store/markersReducer'
+import { SelectImage } from '../components/SelectImage'
+import { Image } from '../models/image'
 
 type Props = NativeStackScreenProps<StackParamList, 'Marker'>
 
 export const MarkerScreen = memo(({ route, navigation }: Props) => {
-  const id = route.params.id
+  const { id, image } = route.params
 
   const marker = useAppSelector(selectMarkerById(id))
   const { name, location, images } = marker
@@ -22,6 +22,24 @@ export const MarkerScreen = memo(({ route, navigation }: Props) => {
 
   const handlePress = useCallback(() => navigation.goBack(), [navigation])
 
+  const handleOpenCamera = useCallback(() => {
+    navigation.navigate('Take photo', { id })
+  }, [id, navigation])
+
+  const handleImageSelected = useCallback(
+    (image: Image) => {
+      dispatch(addImage({ id, image }))
+    },
+    [dispatch, id]
+  )
+
+  useEffect(() => {
+    if (image) {
+      dispatch(addImage({ id, image: image }))
+      navigation.navigate('Marker', { id })
+    }
+  }, [dispatch, id, image, navigation])
+
   return (
     <View style={styles.container}>
       <TextInput style={styles.nameInput} placeholder='Marker name' value={name} onChangeText={handleChangeText} />
@@ -30,9 +48,11 @@ export const MarkerScreen = memo(({ route, navigation }: Props) => {
         Location: ({location.latitude}, {location.longitude})
       </Text>
 
-      <ChooseImage />
+      <SelectImage onSelected={handleImageSelected} />
 
-      <TakePhoto />
+      <TouchableOpacity style={styles.toggleCameraButton} onPress={handleOpenCamera}>
+        <Text style={defaultStyles.buttonText}>Take photo</Text>
+      </TouchableOpacity>
 
       <Gallery images={images} />
 
@@ -82,6 +102,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     flexWrap: 'wrap'
+  },
+  toggleCameraButton: {
+    ...defaultStyles.button,
+    backgroundColor: '#0b82e7'
   },
   backButton: {
     ...defaultStyles.button,
