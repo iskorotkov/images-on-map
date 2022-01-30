@@ -41,20 +41,21 @@ export const TakePhoto = memo(() => {
 
   return (
     <View style={styles.container}>
-      <Camera style={styles.camera} type={type} onCameraReady={handleCameraReady}>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.toggleCameraButton} onPress={handleToggleCamera}>
-            <Text style={defaultStyles.buttonText}>Toggle camera</Text>
-          </TouchableOpacity>
-        </View>
-      </Camera>
+      <Camera style={styles.camera} type={type} onCameraReady={handleCameraReady} />
+
+      <TouchableOpacity style={styles.toggleCameraButton} onPress={handleToggleCamera}>
+        <Text style={defaultStyles.buttonText}>Toggle camera</Text>
+      </TouchableOpacity>
     </View>
   )
 })
 
 const styles = StyleSheet.create({
   container: {},
-  camera: {},
+  camera: {
+    width: 200,
+    height: 200
+  },
   toggleCameraButton: {
     ...defaultStyles.button,
     backgroundColor: '#0b82e7'
@@ -62,6 +63,5 @@ const styles = StyleSheet.create({
   requestPermissionButton: {
     ...defaultStyles.button,
     backgroundColor: '#0b82e7'
-  },
-  buttonContainer: {}
+  }
 })

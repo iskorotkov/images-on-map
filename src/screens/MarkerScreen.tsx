@@ -13,9 +13,9 @@ type Props = NativeStackScreenProps<StackParamList, 'Marker'>
 
 export const MarkerScreen = memo(({ route, navigation }: Props) => {
   const id = route.params.id
+
   const marker = useAppSelector(selectMarkerById(id))
   const { name, location, images } = marker
-
   const dispatch = useAppDispatch()
 
   const handleChangeText = useCallback((name: string) => dispatch(renameMarker({ id, name })), [dispatch, id])
@@ -27,7 +27,7 @@ export const MarkerScreen = memo(({ route, navigation }: Props) => {
       <TextInput style={styles.nameInput} placeholder='Marker name' value={name} onChangeText={handleChangeText} />
 
       <Text style={styles.location}>
-        Location: ({location.lat}, {location.lng})
+        Location: ({location.latitude}, {location.longitude})
       </Text>
 
       <ChooseImage />
@@ -67,6 +67,7 @@ const styles = StyleSheet.create({
     padding: 5,
     margin: 10,
     width: '100%',
+    minWidth: 50,
     maxWidth: 600,
     borderColor: '#cecece',
     backgroundColor: '#ececec',
@@ -79,7 +80,8 @@ const styles = StyleSheet.create({
   buttons: {
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    flexWrap: 'wrap'
   },
   backButton: {
     ...defaultStyles.button,

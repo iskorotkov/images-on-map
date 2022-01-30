@@ -31,11 +31,14 @@ export const ChooseImage = memo(() => {
 })
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center'
+  },
   thumbnail: {
     width: 200,
-    height: 200,
-    margin: 'auto'
+    height: 200
   },
   chooseImageButton: {
     ...defaultStyles.button,

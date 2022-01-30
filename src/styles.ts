@@ -3,7 +3,7 @@ import { TextStyle, ViewStyle } from 'react-native'
 export const defaultStyles = {
   button: {
     paddingVertical: 10,
-    paddingHorizontal: 40,
+    paddingHorizontal: 20,
     margin: 10,
     borderRadius: 100
   } as ViewStyle,

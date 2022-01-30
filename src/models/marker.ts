@@ -1,4 +1,4 @@
-import { Coords } from 'google-map-react'
+import { Coords } from './coords'
 
 export interface Marker {
   id: string
