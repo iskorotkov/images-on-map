@@ -95,7 +95,7 @@ export const MapScreen = memo(({ navigation }: Props) => {
       >
         {markers.map(_ => (
           <MapMarker
-            key={_.id}
+            key={_.id + _.name}
             identifier={_.id}
             title={_.name}
             description={`${_.images.length} images`}
