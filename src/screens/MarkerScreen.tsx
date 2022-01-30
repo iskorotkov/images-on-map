@@ -5,7 +5,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { Gallery } from '../components/Gallery'
 import { defaultStyles } from '../styles'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
-import { addImage, renameMarker, selectMarkerById } from '../store/markersReducer'
+import { addImage, removeMarker, renameMarker, selectMarkerById } from '../store/markersReducer'
 import { SelectImage } from '../components/SelectImage'
 import { Image } from '../models/image'
 
@@ -21,6 +21,11 @@ export const MarkerScreen = memo(({ route, navigation }: Props) => {
   const handleChangeText = useCallback((name: string) => dispatch(renameMarker({ id, name })), [dispatch, id])
 
   const handlePress = useCallback(() => navigation.goBack(), [navigation])
+
+  const handleRemove = useCallback(() => {
+    dispatch(removeMarker(id))
+    navigation.goBack()
+  }, [dispatch, id, navigation])
 
   const handleOpenCamera = useCallback(() => {
     navigation.navigate('Take photo', { id })
@@ -64,12 +69,8 @@ export const MarkerScreen = memo(({ route, navigation }: Props) => {
             <Text style={defaultStyles.buttonText}>Back</Text>
           </TouchableHighlight>
 
-          <TouchableHighlight style={styles.removeButton} onPress={() => {}}>
+          <TouchableHighlight style={styles.removeButton} onPress={handleRemove}>
             <Text style={defaultStyles.buttonText}>Remove</Text>
-          </TouchableHighlight>
-
-          <TouchableHighlight style={styles.updateButton} onPress={() => {}}>
-            <Text style={defaultStyles.buttonText}>Update</Text>
           </TouchableHighlight>
         </View>
       </View>
@@ -123,9 +124,5 @@ const styles = StyleSheet.create({
   removeButton: {
     ...defaultStyles.button,
     backgroundColor: '#ff5050'
-  },
-  updateButton: {
-    ...defaultStyles.button,
-    backgroundColor: '#209d1b'
   }
 })
