@@ -43,7 +43,9 @@ export const MarkerScreen = memo(({ route, navigation }: Props) => {
   return (
     <ScrollView>
       <View style={styles.container}>
-        <TextInput style={styles.nameInput} placeholder='Marker name' value={name} onChangeText={handleChangeText} />
+        <View style={styles.nameWrapper}>
+          <TextInput style={styles.nameInput} placeholder='Marker name' value={name} onChangeText={handleChangeText} />
+        </View>
 
         <Text style={styles.location}>
           Location: ({location.latitude}, {location.longitude})
@@ -85,10 +87,15 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     maxWidth: 768
   },
+  nameWrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+    flexWrap: 'nowrap'
+  },
   nameInput: {
+    flex: 1,
     padding: 5,
     margin: 10,
-    width: '100%',
     minWidth: 50,
     maxWidth: 600,
     borderColor: '#cecece',
