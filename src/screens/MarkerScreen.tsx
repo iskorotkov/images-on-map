@@ -1,5 +1,5 @@
 import { memo, useCallback, useEffect } from 'react'
-import { StyleSheet, Text, TextInput, TouchableHighlight, TouchableOpacity, View } from 'react-native'
+import { ScrollView, StyleSheet, Text, TextInput, TouchableHighlight, TouchableOpacity, View } from 'react-native'
 import { StackParamList } from '../../App'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { Gallery } from '../components/Gallery'
@@ -41,35 +41,37 @@ export const MarkerScreen = memo(({ route, navigation }: Props) => {
   }, [dispatch, id, image, navigation])
 
   return (
-    <View style={styles.container}>
-      <TextInput style={styles.nameInput} placeholder='Marker name' value={name} onChangeText={handleChangeText} />
+    <ScrollView>
+      <View style={styles.container}>
+        <TextInput style={styles.nameInput} placeholder='Marker name' value={name} onChangeText={handleChangeText} />
 
-      <Text style={styles.location}>
-        Location: ({location.latitude}, {location.longitude})
-      </Text>
+        <Text style={styles.location}>
+          Location: ({location.latitude}, {location.longitude})
+        </Text>
 
-      <SelectImage onSelected={handleImageSelected} />
+        <SelectImage onSelected={handleImageSelected} />
 
-      <TouchableOpacity style={styles.toggleCameraButton} onPress={handleOpenCamera}>
-        <Text style={defaultStyles.buttonText}>Take photo</Text>
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.toggleCameraButton} onPress={handleOpenCamera}>
+          <Text style={defaultStyles.buttonText}>Take photo</Text>
+        </TouchableOpacity>
 
-      <Gallery images={images} />
+        <Gallery images={images} />
 
-      <View style={styles.buttons}>
-        <TouchableHighlight style={styles.backButton} onPress={handlePress}>
-          <Text style={defaultStyles.buttonText}>Back</Text>
-        </TouchableHighlight>
+        <View style={styles.buttons}>
+          <TouchableHighlight style={styles.backButton} onPress={handlePress}>
+            <Text style={defaultStyles.buttonText}>Back</Text>
+          </TouchableHighlight>
 
-        <TouchableHighlight style={styles.removeButton} onPress={() => {}}>
-          <Text style={defaultStyles.buttonText}>Remove</Text>
-        </TouchableHighlight>
+          <TouchableHighlight style={styles.removeButton} onPress={() => {}}>
+            <Text style={defaultStyles.buttonText}>Remove</Text>
+          </TouchableHighlight>
 
-        <TouchableHighlight style={styles.updateButton} onPress={() => {}}>
-          <Text style={defaultStyles.buttonText}>Update</Text>
-        </TouchableHighlight>
+          <TouchableHighlight style={styles.updateButton} onPress={() => {}}>
+            <Text style={defaultStyles.buttonText}>Update</Text>
+          </TouchableHighlight>
+        </View>
       </View>
-    </View>
+    </ScrollView>
   )
 })
 
