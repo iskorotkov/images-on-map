@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { Marker } from '../models/marker'
-import { RootState } from './store'
-import { Image } from '../models/image'
+import { Image } from '../../models/image'
+import { Marker } from '../../models/marker'
+import { RootState } from '../store'
 
 type MarkersState = Marker[]
 

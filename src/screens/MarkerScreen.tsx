@@ -1,13 +1,13 @@
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { memo, useCallback, useEffect } from 'react'
 import { ScrollView, StyleSheet, Text, TextInput, TouchableHighlight, TouchableOpacity, View } from 'react-native'
 import { StackParamList } from '../../App'
-import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { Gallery } from '../components/Gallery'
-import { defaultStyles } from '../styles'
-import { useAppDispatch, useAppSelector } from '../store/hooks'
-import { addImage, removeMarker, renameMarker, selectMarkerById } from '../store/markersReducer'
 import { SelectImage } from '../components/SelectImage'
 import { Image } from '../models/image'
+import { useAppDispatch, useAppSelector } from '../store/hooks'
+import { addImage, removeMarker, renameMarker, selectMarkerById } from '../store/reducers/markersReducer'
+import { defaultStyles } from '../styles'
 
 type Props = NativeStackScreenProps<StackParamList, 'Marker'>
 
