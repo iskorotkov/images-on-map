@@ -35,7 +35,8 @@
     "react-redux": "^7.2.6",
     "reflect-metadata": "^0.1.13",
     "typeorm": "^0.2.41",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "expo-notifications": "~0.14.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
