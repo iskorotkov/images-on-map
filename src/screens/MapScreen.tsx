@@ -1,10 +1,10 @@
-import { StyleSheet, View } from 'react-native'
-import { memo, useCallback, useState } from 'react'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { memo, useCallback, useState } from 'react'
+import { StyleSheet, View } from 'react-native'
+import MapView, { EventUserLocation, MapEvent, Marker as MapMarker, PROVIDER_GOOGLE, Region } from 'react-native-maps'
 import { StackParamList } from '../../App'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { addMarker, selectMarkers } from '../store/markersReducer'
-import MapView, { EventUserLocation, MapEvent, Marker as MapMarker, PROVIDER_GOOGLE, Region } from 'react-native-maps'
 import { uuid } from '../uuid'
 
 type Props = NativeStackScreenProps<StackParamList, 'Map'>
@@ -49,7 +49,7 @@ export const MapScreen = memo(({ navigation }: Props) => {
   const handleUserLocationChange = useCallback(
     (event: EventUserLocation) => {
       if (firstLoad) {
-        console.debug('get user location', event.nativeEvent.coordinate)
+        console.debug('get user location', JSON.stringify(event.nativeEvent.coordinate))
         const { latitude, longitude } = event.nativeEvent.coordinate
         setFirstLoad(false)
         setSelectedLocation({ ...moscowLocation, latitude, longitude })

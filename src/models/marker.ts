@@ -1,9 +1,18 @@
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm/browser'
 import { Coords } from './coords'
 import { Image } from './image'
 
-export interface Marker {
-  id: string
-  name: string
-  location: Coords
-  images: Image[]
+@Entity()
+export class Marker {
+  @PrimaryGeneratedColumn('uuid')
+  id!: string
+
+  @Column()
+  name!: string
+
+  @Column(() => Coords)
+  location!: Coords
+
+  @OneToMany(() => Image, _ => _.marker, { cascade: true, onDelete: 'CASCADE' })
+  images!: Image[]
 }

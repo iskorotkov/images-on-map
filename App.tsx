@@ -1,3 +1,4 @@
+import 'reflect-metadata'
 import { memo } from 'react'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
@@ -7,6 +8,7 @@ import { store } from './src/store/store'
 import { Provider } from 'react-redux'
 import { TakePhotoScreen } from './src/screens/TakePhotoScreen'
 import { Image } from './src/models/image'
+import { LoadData } from './src/components/LoadData'
 
 export type StackParamList = {
   Map: {}
@@ -19,6 +21,7 @@ const Stack = createNativeStackNavigator<StackParamList>()
 const App = memo(() => {
   return (
     <Provider store={store}>
+      <LoadData />
       <NavigationContainer>
         <Stack.Navigator initialRouteName='Map'>
           <Stack.Screen name='Map' component={MapScreen} />

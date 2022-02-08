@@ -11,6 +11,7 @@ export const markersSlice = createSlice({
   name: 'markers',
   initialState,
   reducers: {
+    replaceState: (state, action: PayloadAction<MarkersState>) => action.payload,
     addMarker: (state, action: PayloadAction<Marker>) => [...state, action.payload],
     removeMarker: (state, action: PayloadAction<string>) => state.filter(_ => _.id !== action.payload),
     renameMarker: (state, action: PayloadAction<{ id: string; name: string }>) =>
@@ -26,7 +27,7 @@ export const markersSlice = createSlice({
 
 export const markersReducer = markersSlice.reducer
 
-export const { addMarker, removeMarker, renameMarker, addImage, removeImage } = markersSlice.actions
+export const { replaceState, addMarker, removeMarker, renameMarker, addImage, removeImage } = markersSlice.actions
 
 export const selectMarkers = (state: RootState) => state.markers
 
