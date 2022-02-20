@@ -1,9 +1,9 @@
 import { Column } from 'typeorm/browser'
 
 export class Coords {
-  @Column()
+  @Column('double')
   latitude!: number
 
-  @Column()
+  @Column('double')
   longitude!: number
 }

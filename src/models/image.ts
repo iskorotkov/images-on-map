@@ -6,13 +6,13 @@ export class Image {
   @PrimaryGeneratedColumn('uuid')
   id!: string
 
-  @Column()
+  @Column('varchar')
   uri!: string
 
-  @Column()
+  @Column('int')
   width!: number
 
-  @Column()
+  @Column('int')
   height!: number
 
   @ManyToOne(() => Marker, _ => _.images)
