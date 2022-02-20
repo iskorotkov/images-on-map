@@ -5,12 +5,13 @@ import { Provider } from 'react-redux'
 import 'reflect-metadata'
 import { LoadData } from './src/components/LoadData'
 import { NotificationProvider } from './src/components/NotificationProvider'
-import { StatusNotification } from './src/components/StatusNotification'
 import { Image } from './src/models/image'
 import { MapScreen } from './src/screens/MapScreen'
 import { MarkerScreen } from './src/screens/MarkerScreen'
 import { TakePhotoScreen } from './src/screens/TakePhotoScreen'
 import { store } from './src/store/store'
+import { LocationProvider } from './src/components/LocationProvider'
+import { NearestMarkersNotification } from './src/components/NearestMarkersNotification'
 
 export type StackParamList = {
   Map: {}
@@ -26,7 +27,9 @@ const App = memo(() => {
       <LoadData />
 
       <NotificationProvider>
-        <StatusNotification />
+        <LocationProvider>
+          <NearestMarkersNotification />
+        </LocationProvider>
       </NotificationProvider>
 
       <NavigationContainer>
