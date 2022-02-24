@@ -40,9 +40,13 @@ export const selectMarkerById = (id: string) => (state: RootState) => state.mark
 const apiBaseUrl = Constants.manifest!.extra!.apiBaseUrl
 
 export const fetchMarkersThunk = createAsyncThunk('markers/fetch', async (_, { dispatch }) => {
-  const resp = await axios.get<Marker[]>(apiBaseUrl + '/')
-  console.log('got markers from server', JSON.stringify(resp.data))
-  dispatch(replaceState(resp.data))
+  try {
+    const resp = await axios.get<Marker[]>(apiBaseUrl + '/')
+    console.log('got markers from server', JSON.stringify(resp.data))
+    dispatch(replaceState(resp.data))
+  } catch {
+    alert('Error fetching markers from server')
+  }
 })
 
 export const addMarkerThunk = createAsyncThunk<void, Marker>('markers/add', async (marker, { dispatch }) => {
@@ -51,6 +55,7 @@ export const addMarkerThunk = createAsyncThunk<void, Marker>('markers/add', asyn
     await axios.post(apiBaseUrl + '/', marker)
   } catch {
     dispatch(removeMarker(marker.id))
+    alert('Error adding marker')
   }
 })
 
@@ -64,6 +69,7 @@ export const removeMarkerThunk = createAsyncThunk<void, string, AsyncThunkConfig
       await axios.delete(apiBaseUrl + '/' + id)
     } catch {
       dispatch(addMarker(deleted))
+      alert('Error removing marker')
     }
   }
 )
@@ -80,6 +86,7 @@ export const renameMarkerThunk = createAsyncThunk<void, { id: string; name: stri
       await axios.put(apiBaseUrl + '/' + id, updated)
     } catch {
       dispatch(renameMarker(old))
+      alert('Error renaming marker')
     }
   }
 )
@@ -94,6 +101,7 @@ export const addImageThunk = createAsyncThunk<void, { id: string; image: Image }
       await axios.put(apiBaseUrl + '/' + id, updated)
     } catch {
       dispatch(removeImage({ id, imageId: image.id }))
+      alert('Error adding image to marker')
     }
   }
 )
@@ -108,6 +116,7 @@ export const removeImageThunk = createAsyncThunk<void, { id: string; image: Imag
       await axios.put(apiBaseUrl + '/' + id, updated)
     } catch {
       dispatch(addImage({ id, image }))
+      alert('Error removing image from marker')
     }
   }
 )
