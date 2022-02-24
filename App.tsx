@@ -12,6 +12,7 @@ import { TakePhotoScreen } from './src/screens/TakePhotoScreen'
 import { store } from './src/store/store'
 import { LocationProvider } from './src/components/LocationProvider'
 import { NearestMarkersNotification } from './src/components/NearestMarkersNotification'
+import { LogBox } from 'react-native'
 
 export type StackParamList = {
   Map: {}
@@ -22,6 +23,8 @@ export type StackParamList = {
 const Stack = createNativeStackNavigator<StackParamList>()
 
 const App = memo(() => {
+  LogBox.ignoreLogs(['Require cycle:'])
+
   return (
     <Provider store={store}>
       <LoadData />
