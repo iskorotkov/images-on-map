@@ -1,7 +1,9 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { Image } from '../../models/image'
 import { Marker } from '../../models/marker'
-import { RootState } from '../store'
+import { AsyncThunkConfig, RootState } from '../store'
+import axios from 'axios'
+import Constants from 'expo-constants'
 
 type MarkersState = Marker[]
 
@@ -27,8 +29,85 @@ export const markersSlice = createSlice({
 
 export const markersReducer = markersSlice.reducer
 
-export const { replaceState, addMarker, removeMarker, renameMarker, addImage, removeImage } = markersSlice.actions
+export const { replaceState } = markersSlice.actions
+
+const { addMarker, removeMarker, renameMarker, addImage, removeImage } = markersSlice.actions
 
 export const selectMarkers = (state: RootState) => state.markers
 
 export const selectMarkerById = (id: string) => (state: RootState) => state.markers.filter(_ => _.id === id)[0]
+
+const apiBaseUrl = Constants.manifest!.extra!.apiBaseUrl
+
+export const fetchMarkersThunk = createAsyncThunk('markers/fetch', async (_, { dispatch }) => {
+  const resp = await axios.get<Marker[]>(apiBaseUrl + '/')
+  console.log('got markers from server', JSON.stringify(resp.data))
+  dispatch(replaceState(resp.data))
+})
+
+export const addMarkerThunk = createAsyncThunk<void, Marker>('markers/add', async (marker, { dispatch }) => {
+  dispatch(addMarker(marker))
+  try {
+    await axios.post(apiBaseUrl + '/', marker)
+  } catch {
+    dispatch(removeMarker(marker.id))
+  }
+})
+
+export const removeMarkerThunk = createAsyncThunk<void, string, AsyncThunkConfig>(
+  'markers/remove',
+  async (id, { dispatch, getState }) => {
+    const deleted = selectMarkerById(id)(getState())
+
+    dispatch(removeMarker(id))
+    try {
+      await axios.delete(apiBaseUrl + '/' + id)
+    } catch {
+      dispatch(addMarker(deleted))
+    }
+  }
+)
+
+export const renameMarkerThunk = createAsyncThunk<void, { id: string; name: string }, AsyncThunkConfig>(
+  'markers/rename',
+  async ({ id, name }, { dispatch, getState }) => {
+    const old = selectMarkerById(id)(getState())
+
+    dispatch(renameMarker({ id, name }))
+
+    const updated = selectMarkerById(id)(getState())
+    try {
+      await axios.put(apiBaseUrl + '/' + id, updated)
+    } catch {
+      dispatch(renameMarker(old))
+    }
+  }
+)
+
+export const addImageThunk = createAsyncThunk<void, { id: string; image: Image }, AsyncThunkConfig>(
+  'markers/addImage',
+  async ({ id, image }, { dispatch, getState }) => {
+    dispatch(addImage({ id, image }))
+
+    const updated = selectMarkerById(id)(getState())
+    try {
+      await axios.put(apiBaseUrl + '/' + id, updated)
+    } catch {
+      dispatch(removeImage({ id, imageId: image.id }))
+    }
+  }
+)
+
+export const removeImageThunk = createAsyncThunk<void, { id: string; image: Image }, AsyncThunkConfig>(
+  'markers/removeImage',
+  async ({ id, image }, { dispatch, getState }) => {
+    dispatch(removeImage({ id, imageId: image.id }))
+
+    const updated = selectMarkerById(id)(getState())
+    try {
+      await axios.put(apiBaseUrl + '/' + id, updated)
+    } catch {
+      dispatch(addImage({ id, image }))
+    }
+  }
+)

@@ -4,7 +4,7 @@ import { StyleSheet, View } from 'react-native'
 import MapView, { EventUserLocation, MapEvent, Marker as MapMarker, PROVIDER_GOOGLE, Region } from 'react-native-maps'
 import { StackParamList } from '../../App'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
-import { addMarker, selectMarkers } from '../store/reducers/markersReducer'
+import { addMarkerThunk, selectMarkers } from '../store/reducers/markersReducer'
 import { uuid } from '../uuid'
 
 type Props = NativeStackScreenProps<StackParamList, 'Map'>
@@ -22,7 +22,7 @@ export const MapScreen = memo(({ navigation }: Props) => {
     (event: MapEvent) => {
       console.debug('adding marker')
       dispatch(
-        addMarker({
+        addMarkerThunk({
           id: uuid(),
           name: 'New marker',
           location: event.nativeEvent.coordinate,

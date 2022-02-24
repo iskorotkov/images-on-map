@@ -6,7 +6,7 @@ import { Gallery } from '../components/Gallery'
 import { SelectImage } from '../components/SelectImage'
 import { Image } from '../models/image'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
-import { addImage, removeMarker, renameMarker, selectMarkerById } from '../store/reducers/markersReducer'
+import { addImageThunk, removeMarkerThunk, renameMarkerThunk, selectMarkerById } from '../store/reducers/markersReducer'
 import { defaultStyles } from '../styles'
 
 type Props = NativeStackScreenProps<StackParamList, 'Marker'>
@@ -18,12 +18,12 @@ export const MarkerScreen = memo(({ route, navigation }: Props) => {
   const { name, location, images } = marker
   const dispatch = useAppDispatch()
 
-  const handleChangeText = useCallback((name: string) => dispatch(renameMarker({ id, name })), [dispatch, id])
+  const handleChangeText = useCallback((name: string) => dispatch(renameMarkerThunk({ id, name })), [dispatch, id])
 
   const handlePress = useCallback(() => navigation.goBack(), [navigation])
 
   const handleRemove = useCallback(() => {
-    dispatch(removeMarker(id))
+    dispatch(removeMarkerThunk(id))
     navigation.goBack()
   }, [dispatch, id, navigation])
 
@@ -33,14 +33,14 @@ export const MarkerScreen = memo(({ route, navigation }: Props) => {
 
   const handleImageSelected = useCallback(
     (image: Image) => {
-      dispatch(addImage({ id, image }))
+      dispatch(addImageThunk({ id, image }))
     },
     [dispatch, id]
   )
 
   useEffect(() => {
     if (image) {
-      dispatch(addImage({ id, image: image }))
+      dispatch(addImageThunk({ id, image: image }))
       navigation.navigate('Marker', { id })
     }
   }, [dispatch, id, image, navigation])
